@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Iris Dataset CRUD by Azizbek</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
+    <style>
+        * {
+            font-family: 'Roboto', sans-serif;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #f4f6f8;
+            padding: 30px;
+            margin: 0;
+        }
+
+       h1 {
+    text-align: center;
+    color: #2c3e50;
+    font-size: 2.5rem;
+    margin-top: 0;
+}
+
+    form, .section {
+    background: white;
+    padding: 20px;
+    margin: 20px auto;
+    max-width: 1000px; /* Make it wider */
+    width: 100%;         /* Responsive on smaller screens */
+    border-radius: 8px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.05);
+}
+
+        form input, button {
+            padding: 10px;
+            margin: 5px;
+            width: 100%;
+            max-width: 300px;
+            display: block;
+        }
+
+        form input {
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        button {
+            background: #3498db;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        button:hover {
+            background: #2980b9;
+        }
+
+        #result {
+            white-space: pre-wrap;
+            background: #ecf0f1;
+            padding: 10px;
+            border-radius: 6px;
+            margin-top: 10px;
+        }
+
+        .form-title {
+            font-size: 1.2em;
+            margin-bottom: 10px;
+            color: #34495e;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Iris Dataset – CRUD Interface</h1>
+
+    <div class="section">
+        <div class="form-title">Create New Entry</div>
+        <form id="create-form">
+            <input type="number" name="id" placeholder="ID" required>
+            <input type="text" name="SepalLengthCm" placeholder="Sepal Length (cm)" required>
+            <input type="text" name="SepalWidthCm" placeholder="Sepal Width (cm)" required>
+            <input type="text" name="PetalLengthCm" placeholder="Petal Length (cm)" required>
+            <input type="text" name="PetalWidthCm" placeholder="Petal Width (cm)" required>
+            <input type="text" name="Species" placeholder="Species" required>
+            <button type="submit">Create Entry</button>
+        </form>
+    </div>
+
+    <div class="section">
+        <div class="form-title">Read Data</div>
+        <button onclick="fetchAll()">Get All Records</button>
+        <br>
+        <input type="number" id="fetch-id" placeholder="Fetch by ID">
+        <button onclick="fetchById()">Get Record by ID</button>
+        <div id="result"></div>
+    </div>
+
+    <div class="section">
+        <div class="form-title">Update Entry by ID</div>
+        <form id="update-form">
+            <input type="number" name="id" placeholder="ID to Update" required>
+            <input type="text" name="SepalLengthCm" placeholder="Sepal Length (cm)">
+            <input type="text" name="SepalWidthCm" placeholder="Sepal Width (cm)">
+            <input type="text" name="PetalLengthCm" placeholder="Petal Length (cm)">
+            <input type="text" name="PetalWidthCm" placeholder="Petal Width (cm)">
+            <input type="text" name="Species" placeholder="Species">
+            <button type="submit">Update Entry</button>
+        </form>
+    </div>
+
+    <div class="section">
+        <div class="form-title">Delete Entry by ID</div>
+        <input type="number" id="delete-id" placeholder="ID to Delete">
+        <button onclick="deleteById()">Delete Record</button>
+    </div>
+
+    <script>
+        document.getElementById('create-form').onsubmit = async function(e) {
+            e.preventDefault();
+            const data = Object.fromEntries(new FormData(e.target).entries());
+
+            const res = await fetch('/iris', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+
+            const result = await res.json();
+            alert(result.message || JSON.stringify(result));
+        };
+
+        document.getElementById('update-form').onsubmit = async function(e) {
+            e.preventDefault();
+            const data = Object.fromEntries(new FormData(e.target).entries());
+            const id = data.id;
+            delete data.id;
+
+            const res = await fetch(`/iris/${id}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+
+            const result = await res.json();
+            alert(result.message || JSON.stringify(result));
+        };
+
+        async function fetchAll() {
+            const res = await fetch('/iris');
+            const data = await res.json();
+            document.getElementById('result').innerText = JSON.stringify(data, null, 2);
+        }
+
+        async function fetchById() {
+            const id = document.getElementById('fetch-id').value;
+            if (!id) return alert("Enter an ID");
+            const res = await fetch(`/iris/${id}`);
+            const data = await res.json();
+            document.getElementById('result').innerText = JSON.stringify(data, null, 2);
+        }
+
+        async function deleteById() {
+            const id = document.getElementById('delete-id').value;
+            if (!id) return alert("Enter an ID to delete");
+
+            const res = await fetch(`/iris/${id}`, {
+                method: 'DELETE'
+            });
+
+            const result = await res.json();
+            alert(result.message || JSON.stringify(result));
+        }
+    </script>
+</body>
+</html>
+
