@@ -106,8 +106,6 @@ License This project is licensed under the MIT License - see the LICENSE file fo
 
 Author: Azizbek Email: uwerplaystation@gmail.com
 
-markdown Копировать Редактировать
-
 How to Use:
 Replace <your-repo-url> with the URL of your actual GitHub repository.
 Replace <YOUR-BUCKET-NAME> with your actual S3 bucket name.
